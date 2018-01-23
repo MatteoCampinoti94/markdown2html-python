@@ -36,11 +36,11 @@ for c in ifile.read():
             continue
         c = ifile.read()
         if c in ('*', '_'):
-            ofile.write(f'<{'/'*B}b>')
+            ofile.write(f'<{"/"*B}b>')
             B = not B
         else:
             i -= 1
-            ofile.write(f'<{'/'*I}i>')
+            ofile.write(f'<{"/"*I}i>')
             I = not I
 
     elif c == '`':
@@ -48,7 +48,7 @@ for c in ifile.read():
         if c == '`':
             c = ifile.read()
             if c == '`':
-                ofile.write(f'<{'/'*C}code>')
+                ofile.write(f'<{"/"*C}code>')
                 C = not C
             else:
                 if C:
@@ -61,7 +61,7 @@ for c in ifile.read():
                 ofile.write('`'+c)
                 continue
             i -= 1
-            ofile.write(f'<{'/'*c}code>')
+            ofile.write(f'<{"/"*c}code>')
             c = not c
 
     elif c == '>':
