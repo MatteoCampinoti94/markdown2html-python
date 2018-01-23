@@ -73,8 +73,10 @@ for c in ifile.read():
             ofile.write('<br>\n')
         c = ifile.read()
         if c == '\n':
+            ofile.write('</blockquote>'*Q)
             ofile.write('</p>\n\n')
             p == False
+            B = I = c = S = Q = False
         else:
             ofile.write('<br>\n')
             i -= 1
