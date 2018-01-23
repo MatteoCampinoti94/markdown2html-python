@@ -35,6 +35,7 @@ for ch in ifile.read():
             ofile.write(ch)
             continue
         ch = ifile.read()
+        i += 1
         if ch in ('*', '_'):
             ofile.write(f'<{"/"*B}b>')
             B = not B
@@ -45,8 +46,10 @@ for ch in ifile.read():
 
     elif ch == '`':
         ch = ifile.read()
+        i += 1
         if ch == '`':
             ch = ifile.read()
+            i += 1
             if ch == '`':
                 ofile.write(f'<{"/"*C}code>')
                 C = not C
@@ -68,10 +71,25 @@ for ch in ifile.read():
         ofile.write('<blockquote>')
         Q += 1
 
+    elif ch == '~':
+        ch = ifile.read()
+        i += 1
+        if ch == '~':
+            ofile.write(f'<{"/"*S}>')
+            S = not S
+        else:
+            i -= 1
+            ofile.write('~')
+
+
     elif ch == '\n':
+        if C:
+            ofile.write(ch)
+            continue
         if not p:
             ofile.write('<br>\n')
         ch = ifile.read()
+        i += 1
         if ch == '\n':
             ofile.write('</blockquote>'*Q)
             ofile.write('</p>\n\n')
