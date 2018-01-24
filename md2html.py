@@ -11,8 +11,11 @@ if not os.path.isfile(sys.argv[1]):
 ifile = sys.argv[1]
 ofile = re.sub('\.(md|markdown)$', '', ifile)+'.html'
 
-ifile = open(ifile, 'r')
-ofile = open(ofile, 'w')
+ifile = open(ifile, 'r') ; ifile_str = ifile.read() + '  '
+ofile = open(ofile, 'w') ; ofile_str = ''
+
+print(sys.getsizeof(ifile_str))
+print(sys.getsizeof(ofile_str))
 
 B = False
 I = False
@@ -23,7 +26,8 @@ Q = 0
 p = False
 i = 0
 
-for ch in ifile.read():
+while i < len(ifile_str)-2:
+    ch = ifile_str[i]
     i += 1
 
     if ch != '\n' and not p:
@@ -34,72 +38,63 @@ for ch in ifile.read():
         if C:
             ofile.write(ch)
             continue
-        ch = ifile.read()
-        i += 1
-        if ch in ('*', '_'):
+        if ifile_str[i] in ('*', '_'):
             ofile.write(f'<{"/"*B}b>')
             B = not B
+            i += 1
         else:
-            i -= 1
             ofile.write(f'<{"/"*I}i>')
             I = not I
 
     elif ch == '`':
-        ch = ifile.read()
-        i += 1
-        if ch == '`':
-            ch = ifile.read()
-            i += 1
-            if ch == '`':
-                ofile.write(f'<{"/"*C}code>')
-                C = not C
-            else:
-                if C:
-                    ofile.write('``'+ch)
-                    continue
-                i -= 1
-                ofile.write(f'<code></code>')
+        ch_b, ch_c = ifile_str[i], ifile_str[i+1]
+        if ch == ch_b == ch_c:
+            ofile.write(f'<{"/"*C}code>')
+            C = not C
+            i += 2
         else:
             if C:
-                ofile.write('`'+ch)
+                ofile.write(ch)
                 continue
-            i -= 1
             ofile.write(f'<{"/"*c}code>')
             c = not c
 
-    elif ch == '>':
-        ofile.write('<blockquote>')
-        Q += 1
-
     elif ch == '~':
-        ch = ifile.read()
-        i += 1
-        if ch == '~':
-            ofile.write(f'<{"/"*S}>')
+        if C:
+            ofile.write(ch)
+            continue
+        if ifile_str[i] == '~':
+            ofile.write(f'<{"/"*S}del>')
             S = not S
-        else:
-            i -= 1
-            ofile.write('~')
-
+            i += 1
 
     elif ch == '\n':
         if C:
             ofile.write(ch)
             continue
+
+        if c:
+            ofile.write(f'</code>')
+
         if not p:
-            ofile.write('<br>\n')
-        ch = ifile.read()
-        i += 1
-        if ch == '\n':
-            ofile.write('</blockquote>'*Q)
-            ofile.write('</p>\n\n')
-            p == False
-            B = I = c = S = Q = False
+            ofile.write('<br>')
+        elif ifile_str[i] == '\n':
+            ofile.write('</p>\n')
+            p = False
+            i += 1
+
+            if B: ofile.write(f'</b>')
+            if I: ofile.write(f'</i>')
+            if S: ofile.write(f'</del>')
+        elif not ifile_str[i]:
+            if p:
+                ofile.write('</p>\n')
+            else:
+                ofile.write('\n')
         else:
-            ofile.write('<br>\n')
-            i -= 1
+            ofile.write('<br>')
+
+        ofile.write('\n')
 
     else:
         ofile.write(ch)
-
-    ifile.seek(i)
