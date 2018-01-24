@@ -14,9 +14,6 @@ ofile = re.sub('\.(md|markdown)$', '', ifile)+'.html'
 ifile = open(ifile, 'r') ; ifile_str = ifile.read() + '  '
 ofile = open(ofile, 'w') ; ofile_str = ''
 
-print(sys.getsizeof(ifile_str))
-print(sys.getsizeof(ofile_str))
-
 B = False
 I = False
 S = False
