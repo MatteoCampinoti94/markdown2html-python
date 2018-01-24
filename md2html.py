@@ -11,7 +11,7 @@ if not os.path.isfile(sys.argv[1]):
 ifile = sys.argv[1]
 ofile = re.sub('\.(md|markdown)$', '', ifile)+'.html'
 
-ifile = open(ifile, 'r') ; ifile_str = ifile.read() + '  '
+ifile = open(ifile, 'r') ; ifile_str = ifile.read() + '\n '
 ofile = open(ofile, 'w') ; ofile_str = ''
 
 B = False
@@ -79,6 +79,21 @@ while i < len(ifile_str)-2:
                     ofile.write(f'</del>')
                     S = False
                 ofile.write('<hr>')
+
+    elif ch == '[':
+        if re.match('^\[.*\]\(.*(".*"|)\)$', ifile_str[i-1:].split(')',1)[0]+')'):
+            name = ''
+            link = ''
+            alt = ''
+            s = ifile_str[i:].split(')',1)[0]+')'
+            i += len(s)
+            name = s.split(']')[0]
+            link = s.split('(')[1].split(')')[0]
+            if '"' in link:
+                alt = link.split('"')[1].split('"')[0]
+                link = link.split('"')[0].strip()
+        ofile.write(f'<a href="{link}" title="{alt}">{name}</a>')
+
 
     elif ch == '\n':
         if C:
