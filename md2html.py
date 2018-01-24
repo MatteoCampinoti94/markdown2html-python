@@ -68,6 +68,21 @@ while i < len(ifile_str)-2:
             S = not S
             i += 1
 
+    elif ch in ('-', '*', '_'):
+        ch_b , ch_c = ifile_str[i], ifile_str[i+1]
+        if ((i > 1 and ifile_str[i-2] == '\n') or i == 1) and ifile_str[i+2] == '\n':
+            if ch == ch_b == ch_c:
+                if B:
+                    ofile.write(f'</b>')
+                    B = False
+                if I:
+                    ofile.write(f'</i>')
+                    I = False
+                if S:
+                    ofile.write(f'</del>')
+                    S = False
+                ofile.write('<hr>')
+
     elif ch == '\n':
         if C:
             ofile.write(ch)
@@ -83,9 +98,15 @@ while i < len(ifile_str)-2:
             p = False
             i += 1
 
-            if B: ofile.write(f'</b>')
-            if I: ofile.write(f'</i>')
-            if S: ofile.write(f'</del>')
+            if B:
+                ofile.write(f'</b>')
+                B = False
+            if I:
+                ofile.write(f'</i>')
+                I = False
+            if S:
+                ofile.write(f'</del>')
+                S = False
         elif not ifile_str[i]:
             if p:
                 ofile.write('</p>\n')
